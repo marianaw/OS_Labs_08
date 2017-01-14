@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/bstring
+END
+license.txt
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/bstring/license.txt
+END
+bstrlib.c
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/bstring/bstrlib.c
+END
+bstrlib.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/bstring/bstrlib.h
+END

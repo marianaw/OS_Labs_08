@@ -1,0 +1,9 @@
+Para implementar el módulo se siguió la idea presentada en los ejemplos, particularmente el módulo nulo. Sin embargo, para la implementación de las operaciones open, release, read y write se pensó en agregar una capa de abstracción, implementando por un lado el tad "buffer sincronizado" (un rbuffer, 2 semáforos para implementar el problema productor-consumidor, un mutex para la protección de secciones críticas). Luego, desde un módulo funcional (fifo_ops) se implementan las operaciones de open, release, read y write, haciendo uso de las operaciones del tad. Finalmente, en otro módulo, se implementan las operaciones de init y exit.
+	Sobre la implementación del tad "buffer sincronizado" observamos:
+									* Como solamente conocemos de la existencia de un implementación de semáforos (y no de mutex) para la sincronización en el kernel, el mutex que empleamos es un semáforo inicializado en 1. Por la forma en la que es empleado el semáforo suponemos que se mantiene el invariante 0<=mutex<=1.
+									* No se ha implementado el manejo de colas de espera para dormir un proceso consumidor cuando el buffer está vacío, pero se espera que un proceso productor inserte datos en el buffer (simétrico para los procesos productores).
+	Sobre la implementación del módulo fifo_ops mencionamos:
+								* En las operaciones de lectura y escritura del buffer se optó por extraer desde el rbuffer (o traer desde el espacio de usuario) de a un byte de información.
+								* Las operaciones de open y release no se implementaron.
+
+

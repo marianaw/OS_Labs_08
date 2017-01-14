@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/2008/so/grupo12/svn/!svn/ver/199/Lab4/trunk/simple
+END
+inode.c
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/2008/so/grupo12/svn/!svn/ver/164/Lab4/trunk/simple/inode.c
+END
+simple.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/2008/so/grupo12/svn/!svn/ver/164/Lab4/trunk/simple/simple.h
+END
+log.c
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/2008/so/grupo12/svn/!svn/ver/164/Lab4/trunk/simple/log.c
+END
+fusewrapper.c
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/2008/so/grupo12/svn/!svn/ver/176/Lab4/trunk/simple/fusewrapper.c
+END
+inode.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/2008/so/grupo12/svn/!svn/ver/164/Lab4/trunk/simple/inode.h
+END
+log.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/2008/so/grupo12/svn/!svn/ver/164/Lab4/trunk/simple/log.h
+END
+simple.c
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/2008/so/grupo12/svn/!svn/ver/199/Lab4/trunk/simple/simple.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/2008/so/grupo12/svn/!svn/ver/190/Lab4/trunk/simple/Makefile
+END

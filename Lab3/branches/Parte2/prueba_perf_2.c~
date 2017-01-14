@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#define TAM 10
+
+int main (void){
+	
+	/* inicialización de variables: */
+	FILE * result=NULL;
+	int i=0, j=0;
+	char * bloque=NULL;
+	size_t size=0;
+	int close=0;
+	int err=0, err_time1=0, err_time2=0, err_timesubtract=0;
+	timeval * start=NULL;
+	timeval * end=NULL;
+	timeval * result=NULL;
+
+	/* abrir /dev/fifo para escritura */
+	result=fopen ("/dev/fifo","r+");
+	assert (result !=NULL);
+	
+	/*armamos la tabla: */
+	printf ("performance en kb/s:\n");
+	printf ("--------------------\n");
+	printf ("fwrite(), fflush()\n");
+	
+	/* escritura: */
+	for (j=0; j<=16; j++){
+		i= 1<<j;
+		bloque= (char *) calloc (i,sizeof (char));
+		assert (bloque!=NULL);
+		err_time1=gettimeofday (start, NULL);
+		size=fwrite ( (void *) bloque, i, 1, result);
+		err= fflush (result);
+		err_time2=gettimeofday (end, NULL);
+		if (size != i || err !=0){
+			printf ("error \n");
+			return 1;
+		}
+		else {
+			if (err_time1 == 0 && err_time2 == 0){
+				err_subtract= timeval_subtract (result, end, start);
+				if (err_subtract == 0)
+					printf ("%f\n", &result);
+				else{
+					printf ("error en timeval_subtract o gettimeofday\n");
+					return 1;
+				}
+				result=NULL;
+			}
+		}
+	}
+	
+	
+	/* cerrar archivo: */
+	close=fclose (result);
+	if (close != 0)
+		perror((char*)strerror(close));
+	
+	return 0;
+}

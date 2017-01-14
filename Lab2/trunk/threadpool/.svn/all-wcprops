@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/materias/sistop/svn/!svn/ver/558/trunk/Lab-ThreadPool/src/threadpool_kickstart
+END
+primality_checker.c
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/primality_checker.c
+END
+task.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/task.c
+END
+conc_queue.o
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/materias/sistop/svn/!svn/ver/533/trunk/Lab-ThreadPool/src/threadpool_kickstart/conc_queue.o
+END
+task_queue.o
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/materias/sistop/svn/!svn/ver/533/trunk/Lab-ThreadPool/src/threadpool_kickstart/task_queue.o
+END
+primality_checker.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/primality_checker.h
+END
+main.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/main.c
+END
+utils.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/utils.h
+END
+thread_pool.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/thread_pool.h
+END
+task.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/task.h
+END
+task_queue.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/task_queue.h
+END
+conc_queue.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/conc_queue.h
+END
+thread_pool.o
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/materias/sistop/svn/!svn/ver/533/trunk/Lab-ThreadPool/src/threadpool_kickstart/thread_pool.o
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/materias/sistop/svn/!svn/ver/532/trunk/Lab-ThreadPool/src/threadpool_kickstart/Makefile
+END

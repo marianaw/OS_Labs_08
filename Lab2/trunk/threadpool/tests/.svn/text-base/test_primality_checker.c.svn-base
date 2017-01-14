@@ -1,0 +1,71 @@
+/*
+* Copyright (C) 2008 Natalia B. Bidart
+* 
+* This library is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+* 
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License along
+* with this library; if not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* $Rev$ */
+#include <check.h>
+
+#include "test_primality_checker.h"
+#include "primality_checker.h"
+
+#define PSIZE 2
+#define QSIZE 10
+
+START_TEST (test_one_is_prime) {
+	fail_unless(is_prime(1, PSIZE, QSIZE));
+}
+END_TEST
+
+START_TEST (test_known_primes_are_prime) {
+	unsigned long long int known_primes[] = {2,3,5,7,11,13,17,19,23,29};
+	unsigned int i = 0;
+	
+	for (i = 0; i < 10; i++) {
+		fail_unless(is_prime(known_primes[i], PSIZE, QSIZE));
+	}
+}
+END_TEST
+
+START_TEST (test_longest_prime_is_prime) {
+	fail_unless(is_prime(2305843009213693951ULL, PSIZE, QSIZE));
+}
+END_TEST
+
+START_TEST (test_stress) {
+	unsigned long long int p = 2147483647;
+	fail_unless(is_prime(p, PSIZE, QSIZE));
+	fail_unless(is_prime(p, 1000, 1));
+	fail_unless(is_prime(p, 1, 10000));
+}
+END_TEST
+
+/* test suite */
+
+Suite *primality_checker_suite(void) {
+	Suite *s = suite_create("primality_checker");
+	TCase *tc = tcase_create("all");
+
+	tcase_add_checked_fixture(tc, NULL, NULL);
+	tcase_set_timeout(tc, 0);
+	tcase_add_test(tc, test_one_is_prime);
+	tcase_add_test(tc, test_longest_prime_is_prime);
+	tcase_add_test(tc, test_known_primes_are_prime);
+	tcase_add_test(tc, test_stress);
+
+	suite_add_tcase(s, tc);
+
+	return s;
+}

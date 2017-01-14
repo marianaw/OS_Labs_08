@@ -1,0 +1,213 @@
+#include <linux/kernel.h>
+#include <linux/errno.h>
+#include <linux/fs.h>
+#include <linux/string.h> 	/* memset */
+#include <linux/wait.h>		/* cola de espera */
+#include <asm/semaphore.h>/* semaforos */
+#include <linux/types.h>
+
+#define MALLOC(s, u)	kmalloc((s)*(u), GFP_KERNEL)
+#define FREE(p)		kfree(p)
+#define ASSERT(p)	BUG_ON(!(p))
+
+#include "debug.h"
+#include "rbuffer/rbuffer.h"
+#include "fifo.h"
+#include <linux/socket.h>
+#include <linux/fs.h>
+#include <sys/types.h>
+#include <sys/ino.h>
+#define TAM 16
+
+/* Invariante de representación */
+#define inv_rep(b)	(!b || (b->buffer && b->sem_empty && b->sem_full && b-> mutex) )
+
+struct _fifo_t{
+	rbuffer_t buffer;
+	struct semaphore *sem_empty;
+	struct semaphore *sem_full;
+	struct semaphore *mutex;
+};
+
+/* Variables Globales */
+fifo_t fifo;
+
+/* Funciones Publicas */
+
+void fifo_create(const unsigned int size )
+{
+	/* InicializaciÃ³n de variables */
+	bool error = false ;
+
+};
+
+struct file_operations fifo_fops = {
+	.owner	=	THIS_MODULE,
+	.open	=	fifo_open,
+	.read	=	fifo_read,
+	.write	=	fifo_write,
+	.release=	fifo_release
+};
+
+	fifo = (fifo_t) MALLOC(1, sizeof(struct _fifo_t));
+
+	if (fifo)
+	{
+		
+		/* Inicialización de Semaforos */
+		
+		fifo->sem_empty = MALLOC(1,sizeof(struct semaphore));
+		if (!fifo->sem_empty)
+			error = !fifo->sem_empty;
+		
+		fifo->sem_full = MALLOC(1,sizeof(struct semaphore));
+		if (!fifo->sem_empty)
+			error = !fifo->sem_full;
+
+		fifo->mutex = MALLOC(1,sizeof(struct semaphore));
+		if (!fifo->mutex)
+			error = !fifo->mutex;
+			
+		if ( !error)
+		{
+			sema_init ( fifo->sem_empty ,size);
+			sema_init ( fifo->sem_full , 0);
+			sema_init ( fifo->mutex , 1);
+
+<<<<<<< .mine
+static atomic_t fifo_open (struct inode * ip, struct file * fp){
+
+=======
+		}
+		
+>>>>>>> .r147
+#ifdef DEBUG
+	printk (KERN_INFO, "abriendo file\n", file);
+#endif
+	return 0;
+}
+
+
+ssize_t fifo_read (struct file * fp, char * buf, size_t len, loff_t * offset){
+
+		/* Creo el Buffer */
+		fifo->buffer = rbuffer_create (size);
+		if (!fifo->buffer)
+			error = !fifo->buffer;
+		
+		/* Manejo de errores */
+		if (error)
+		{
+			if (fifo->sem_empty)
+			{
+				FREE((void*)fifo->sem_empty);
+				fifo->sem_empty = NULL;
+			}
+			
+			if (fifo->sem_full)
+			{
+				FREE((void*)fifo->sem_full);
+				fifo->sem_full = NULL;
+			}
+
+			if (fifo->mutex)
+			{
+				FREE((void*)fifo->mutex);
+				fifo->mutex = NULL;
+			}
+			
+			if (fifo->buffer)
+			{
+				rbuffer_destroy (fifo->buffer);
+				fifo->buffer = NULL;
+			}
+			
+			FREE((void*) fifo);
+			fifo = NULL;
+		}
+		
+	}
+	/* Poscondición */
+	ASSERT(inv_rep(fifo));
+}
+
+void fifo_destroy(void)
+{
+	/* Precondición */
+	ASSERT(fifo!=NULL);
+	ASSERT(inv_rep(fifo));
+
+	/* Destrucción de los datos  */
+	FREE(fifo->sem_empty);
+	fifo->sem_empty = NULL;
+	
+	FREE(fifo->sem_full);
+	fifo->sem_full = NULL;
+
+	FREE((void*)fifo->mutex);
+	fifo->mutex = NULL;
+	
+	rbuffer_destroy(fifo->buffer);
+	fifo->buffer = NULL;
+	
+	FREE((void *) fifo);
+	fifo = NULL;
+
+	/* Poscondición */
+	ASSERT(inv_rep(fifo));
+}
+
+
+bool fifo_enqueue(const char buf)
+{	
+	/* Inicialización de Variables */
+	bool result = false;
+	
+	/* Precondición */
+	ASSERT (fifo != NULL );
+	
+	/*  Redusco el semaforo de empty */
+	if (down_interruptible(fifo->sem_empty))
+		return true;
+		
+	if (down_interruptible(fifo->mutex))
+		return true;
+		
+	result = rbuffer_insert ( fifo->buffer , (const byte) buf );
+	if (result)
+		dprintk("devfifo: Not more storage space left!");
+	up(fifo->mutex);
+
+	up(fifo->sem_full);
+	
+	return result;
+}
+
+
+bool fifo_dequeue(char *buf)
+{
+	/* Inicialización de Variables */
+	bool result = false;
+
+	/* Precondición */
+	ASSERT (fifo != NULL );
+	
+	/*  Redusco el semaforo de vacios */
+	if (down_interruptible(fifo->sem_full))
+		return true;
+		
+	/* Tomo el byte del buffer */		
+	if (down_interruptible(fifo->mutex))
+		return true;
+		
+	result = rbuffer_remove ( fifo->buffer , (byte *) buf );
+	if (result)
+		dprintk("devfifo: Not more bytes left!");
+	
+	up(fifo->mutex);
+
+	/* Aumento el semaforo de llenos */
+	up(fifo->sem_empty);
+
+	return result;
+}

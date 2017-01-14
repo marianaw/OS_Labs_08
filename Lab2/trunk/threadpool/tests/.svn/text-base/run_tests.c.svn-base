@@ -1,0 +1,37 @@
+/*
+* Copyright (C) 2008 Natalia B. Bidart
+* 
+* This library is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+* 
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License along
+* with this library; if not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* $Rev$ */
+#include <check.h>
+#include <stdlib.h> /* EXIT_SUCCESS, EXIT_FAILURE */
+#include "test_thread_pool.h"
+#include "test_primality_checker.h"
+#include "test_task_queue.h"
+
+int main(void) {
+	int number_failed;
+	SRunner *sr = srunner_create(thread_pool_suite());
+	/*srunner_add_suite (sr, primality_checker_suite());*/
+	srunner_add_suite (sr, task_queue_suite());
+	
+	srunner_set_log(sr, "test.log");
+	srunner_run_all(sr, CK_NORMAL);
+	number_failed = srunner_ntests_failed(sr);
+	srunner_free(sr);
+	
+	return((number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE);
+}

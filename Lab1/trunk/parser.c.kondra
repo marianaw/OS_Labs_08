@@ -1,0 +1,183 @@
+#include "parser.h"
+#include "builtin.h"
+#include <assert.h>
+#include "lexer/lexer.h"
+#include "bstring/bstrlib.h"
+
+/*
+ 	Extraer caracteres de un comando o argumento. Puede omitir caracteres de 
+ control (&,|,< o >) si cadena == true. Devuelve NULL en caso de error.
+	REQUIRES: l != NULL
+ */
+bstring comandoValido(Lexer *l, bool cadena);
+/*
+ 	El usuario del tad pipeline debe encargarse de liberar la memoria-dinÃ¡mica
+ en la que podrÃ­an estar almacenados los elementos de la gqueue. Este comando
+ elimina los scommand almacenados en el pipeline.
+ REQUIRES: p != NULL
+ ENSURES: p == NULL
+ */
+void limpiarPipeline(pipeline *p);
+/*
+ 	El usuario del tad scommand debe encargarse de liberar la memoria-dinámica
+ en la que podrían estar almacenados los elementos de la gqueue. Este comando
+ elimina los bstring almacenados.
+ REQUIRES: s != NULL
+ ENSURES: s == NULL
+ */
+void limpiarScommand(scommand *s);
+/*
+ 	Si se produce un error en el parseo se debe liberar adecuadamente, desde este
+ módulo, la memoria en la que están almacenados los elementos del tad scommand 
+ y pipeline.
+ REQUIRES: p != NULL && s != NULL
+ ENSURES: p == NULL && s == NULL
+ */
+
+void terminarConError(pipeline *p, scommand *s, int error);
+
+pipeline *parsear(FILE *stream)
+{
+	/* Inicialización de Variables */
+	Lexer	 * lx		= NULL;
+	bstring	   bs		= NULL; 
+	bool end			= false;
+	pipeline * pars_pl  = NULL;
+	scommand * pars_sc  = NULL;
+	
+	/* Precondicion */
+	assert (stream != NULL );
+			/* && pl != NULL);*/
+	
+	/* Creo el Lexer */
+	lx = lexer_new(stream);
+	assert(lx != NULL);
+	
+	/* Creo el Pipeline */
+	pars_pl  = pipeline_new();
+	assert(pars_pl != NULL);
+	
+	/* Creo el Scommand */
+	pars_sc  = scommand_new ();
+	assert(pars_sc != NULL);
+	
+	/* Limpio los datos del pipeline anterior 
+	limpiarPipeline (pl);
+	pl = NULL;*/
+	
+	/* Ciclo que termina si hay un EOF o un enter */
+	while (!end) 
+	{
+		if (lexer_is_off (lx)) end = true;
+		else 
+		{
+			 /* Creo el Scommand ( se seguiran creando si hubo un pipe )
+			 if ( !pipeline_is_empty ( pars_pl ) )
+			 {
+				 pars_sc  = scommand_new ();
+				 assert(pars_sc != NULL);
+			 } */
+			 /* Busco argumentos */
+			 lexer_next_to(lx , BLANK "\n" pipe redirIn redirOut segundoPlano );
+			 bs = lexer_item (lx);
+			 if( 0 == biseqcstr (bs, "") && 
+				 !end					 )
+			 {
+				assert ( BSTR_OK == btrimws ( bs) );
+				scommand_push_front (pars_sc , bs); 
+			 }
+			 bs = NULL;
+			 
+			 /* Busco si hay BLANK  */
+			 lexer_next_char(lx , "\n" );
+			 bs = lexer_item (lx);
+			 if( 1 == biseqcstr (bs, "\n")  && 
+				 !end						 )
+			 {
+				 end = true;
+			 }
+			 bdestroy ( bs );
+			 bs = NULL;
+			
+			 /* Busco si hay pipe 
+			 lexer_next_char(lx , pipe );
+			 bs = lexer_item (lx);
+			 if ( 1 == biseqcstr (bs, "|")      && 
+				  !end							&&  
+				  !scommand_is_empty (pars_sc )  )
+			 {
+				 pipeline_push_back ( pars_pl , pars_sc);
+				 pars_sc = NULL;
+			 }
+			 bdestroy ( bs );
+			 bs = NULL;*/
+			
+			
+			 
+		}
+	}
+
+	/* El ultimo scommand que sale del ciclo es agregado aca.
+	 * En caso de que este vacio lo destruimos */
+	if (!scommand_is_empty ( pars_sc))
+	{
+		pipeline_push_back ( pars_pl , pars_sc);
+		pars_sc = NULL;
+	}else{
+		scommand_destroy (pars_sc);
+		pars_sc = NULL;
+	}
+	
+	/* Apuntamos el pipeline con el argumento 
+	pl = pars_pl;
+	pars_pl = NULL;*/
+	
+	return pars_pl;
+	
+}
+	
+void limpiarPipeline(pipeline *p)
+{
+	scommand* aux = NULL;
+	unsigned int n = 0;
+	assert(p != NULL);
+	
+	while(n < pipeline_length(p))
+	{
+		aux = pipeline_front (p);
+		limpiarScommand(aux);
+		pipeline_pop_front(p);
+		n++;
+	}
+	pipeline_destroy (p);
+	p = NULL;
+	assert( p == NULL);
+}
+
+void limpiarScommand(scommand *s)
+{
+	bstring aux = NULL;
+	unsigned int n = 0;
+	assert(s != NULL);
+	
+	while(n < scommand_length(s))
+	{
+		aux = scommand_front (s);
+		bdestroy(aux);
+		scommand_pop_front(s);
+		n++;
+	}
+	scommand_destroy (s);
+	s = NULL;
+	assert(s == NULL);
+}
+
+void terminarConError(pipeline *p, scommand *s, int error)
+{
+	assert(p != NULL && s != NULL);
+	limpiarPipeline(p);
+	limpiarScommand(s);
+	p = NULL;
+	s = NULL;
+	assert(p == NULL && s == NULL);
+}

@@ -1,0 +1,112 @@
+#include "fuse2.h"
+/* #include <glib/ghashtable.h> */
+#include "bstring/bstrlib.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <unistd.h>
+#include <errno.h>
+#include <assert.h>
+#include <glib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+
+
+struct fuse2_s {
+	GHashTable * dirs;
+};
+
+int f_getattr (fuse2 fs, const char * name, struct stat * buf){
+	
+	assert ( name != NULL);
+	/* inicializar la estructura stat: */
+	buf -> st_mode = S_IFREG | S_IFDIR;
+	buf -> st_nlink = 1;
+	buf->st_uid= getuid();
+	buf->st_gid =getgid();
+	buf->st_size = (1ULL << 32); /* por las dudas */
+	buf-> st_blocks = /* no sé */ ;
+	buf->st_atime = stbuf->st_mtime = stbuf->st_ctime = time(NULL);
+
+	return 0;
+}
+
+fuse2 f_create (void){
+	fuse2 fs=NULL;
+	GHashTable * hash= NULL;
+	fs= malloc (sizeof(struct fuse2_s)); /* ¿correcto? */
+	hash = g_hash_table_new (g_str_hash, g_str_equal);
+	fs->dirs=hash;
+}
+
+int f_mknod (fuse2 fs, const char * path, mode_t mode, dev_t dev){
+	
+	int result=0;
+	
+	
+	assert (path != NULL);
+	
+	
+	/* no debe ser un fichero ya existente */
+	if (! S_ISREG (mode))
+		result = mknode (path, mode, dev);
+	
+	/* inserto el nuevo nodo en la ghash: */
+	g_hash_table_insert (fs->dirs, path, &path); /* &path intenta ser el nodo :OS */
+	
+	return result;
+}
+
+int f_unlink (fuse2 fs, const char * path){
+	int result=0;
+	gboolean b=true;
+	
+	
+	assert (path !=NULL);
+	
+	/* debería ver si está en la tabla hash: */
+	if (g_hash_table_lookup_extended (fs->dirs, path, NULL, NULL)){
+		b= g_hash_table_remove (fs->dirs, path);
+		if (b==false)
+			return -1;
+		result = unlink (path); /* ¿?¿? */
+	}
+	
+	return result;
+}
+
+int f_rename (fuse2 fs, const char * name, const char * new_name){
+	int result = 0;
+	
+	assert(name!=NULL && new_name!=NULL);
+	
+	if (g_hash_table_lookup_extended (fs->dirs, path, NULL, NULL))
+		g_hash_table_replace  (fs->dirs, new_name, &name); /* "&name" intenta ser el valor asociado a "name" */
+	
+	result = 0;
+	return result;
+}
+
+int f_chmod (fuse2 fs, const char * path, mode_t mode){
+	int result = 0;
+	assert(INVREP(self));
+	assert(path!=NULL);
+	
+	result = chmod (path, mode);
+	if (result == -1)
+		return -errno;
+
+	return result;
+}
+
+int f_chown (fuse2 fs, const char * owner, uid_t ui, gid_t gi){
+	int result = 0;
+	/*assert(INVREP(self));*/ /* ¿? */
+	assert(owner!=NULL);
+	
+	
+	result = 0;
+	return result;
+}

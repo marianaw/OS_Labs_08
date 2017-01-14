@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/materias/sistop/svn/!svn/ver/558/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests
+END
+test_thread_pool.c
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/materias/sistop/svn/!svn/ver/558/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/test_thread_pool.c
+END
+test_primality_checker.h
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/test_primality_checker.h
+END
+test_thread_pool.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/test_thread_pool.h
+END
+test_task_queue.c
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/materias/sistop/svn/!svn/ver/558/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/test_task_queue.c
+END
+run_tests.c
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/materias/sistop/svn/!svn/ver/558/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/run_tests.c
+END
+test_task_queue.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/materias/sistop/svn/!svn/ver/558/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/test_task_queue.h
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/materias/sistop/svn/!svn/ver/530/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/Makefile
+END
+test_primality_checker.c
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/materias/sistop/svn/!svn/ver/538/trunk/Lab-ThreadPool/src/threadpool_kickstart/tests/test_primality_checker.c
+END

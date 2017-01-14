@@ -1,0 +1,350 @@
+#include "parser.h"
+#include "builtin.h"
+#include <assert.h>
+#include "lexer/lexer.h"
+#include "bstring/bstrlib.h"
+
+
+/*
+ 	Extraer caracteres de un comando o argumento. Puede omitir caracteres de 
+ control (&,|,< o >) si cadena == true. Devuelve NULL en caso de error.
+	REQUIRES: l != NULL
+ */
+bstring comandoValido(Lexer *l, bool cadena);
+/*
+ 	El usuario del tad pipeline debe encargarse de liberar la memoria-dinÃ¡mica
+ en la que podrÃ­an estar almacenados los elementos de la gqueue. Este comando
+ elimina los scommand almacenados en el pipeline.
+ REQUIRES: p != NULL
+ ENSURES: p == NULL
+ */
+void limpiarPipeline(pipeline *p);
+/*
+ 	El usuario del tad scommand debe encargarse de liberar la memoria-dinámica
+ en la que podrían estar almacenados los elementos de la gqueue. Este comando
+ elimina los bstring almacenados.
+ REQUIRES: s != NULL
+ ENSURES: s == NULL
+ */
+void limpiarScommand(scommand *s);
+/*
+ 	Si se produce un error en el parseo se debe liberar adecuadamente, desde este
+ módulo, la memoria en la que están almacenados los elementos del tad scommand 
+ y pipeline.
+ REQUIRES: p != NULL && s != NULL
+ ENSURES: p == NULL && s == NULL
+ */
+
+void end_Ciclo ( Lexer *l , bool seguir );
+
+void terminarConError(pipeline *p, scommand *s, int error);
+
+pipeline *parsear(FILE *stream)
+{
+	bool comando = false;
+	bool pipel = false;
+	bool redir = false;
+	bool seguir = false;
+	bool arg = false;
+	bool archivoIn = false;
+	bool archivoOut = false;
+	bool ampersand = false;
+	pipeline *result = NULL;
+	Lexer *l = NULL;
+	scommand* cmd = NULL;
+	bstring bstr = NULL;
+	
+	assert(stream != NULL);
+	
+	l = lexer_new(stream);
+	
+	assert(l != NULL);
+	
+	cmd = scommand_new();
+	result = pipeline_new();
+	seguir = true;
+	comando = true;
+	
+	
+	
+	while( seguir && !lexer_is_off(l))
+	{
+		if(comando)
+		{
+			bstr = comandoValido(l,false);
+			if(bstr == NULL)
+			{
+				printf("\nFalta comando\n");
+ 				terminarConError(result,cmd,0);
+				result = NULL;
+				cmd = NULL;
+				seguir = false;
+			}
+			else
+			{
+				comando = false;
+				arg = true;
+				scommand_push_back(cmd,bstr);
+				scommand_set_builtin (cmd, is_builtin (bstr) );
+				bstr = NULL;
+				/*end_Ciclo ( l , seguir);*/
+			}
+		}
+		if(arg && seguir)
+		{
+			lexer_next_char(l,"\"");
+			if(!lexer_is_off(l))
+			{
+				bstr = lexer_item(l);
+				if(blength(bstr) > 0)
+				{
+					bdestroy(bstr);
+					bstr = comandoValido(l,true);
+					if(bstr == NULL)
+					{
+						seguir = false;
+						printf("\nFaltan comillas de cierre\n");
+						terminarConError(result,cmd,0);
+						result = NULL;
+						cmd = NULL;
+					}
+				}
+				else
+				{
+					bstr = comandoValido(l,false);
+				}
+				if(bstr == NULL)
+				{
+					arg = false;
+					redir = true;
+				}
+				else
+				{
+					scommand_push_back(cmd,bstr);
+				}
+				/*end_Ciclo  (l ,seguir);*/
+			}
+		}
+		if((redir || pipel || ampersand) && seguir)
+		{	
+			lexer_next(l,redirIn redirOut pipe segundoPlano);
+			if(!lexer_is_off(l))
+			{
+				bstr = lexer_item(l);
+				if(blength(bstr) != 1)
+				{
+					printf("\nse esperaba |,< o >\n");
+					terminarConError(result,cmd,0);
+					result = NULL;
+					cmd = NULL;
+					seguir = false;
+				}
+				else
+				{
+					if(biseqcstr(bstr,pipe))
+					{
+						comando = true;
+						pipeline_push_back(result,cmd);
+						cmd = scommand_new();
+					}
+					else
+					{
+						if(biseqcstr(bstr,redirIn))
+						{
+							archivoIn = true;
+						}
+						else
+						{
+							if(biseqcstr(bstr,redirOut))
+							{
+								archivoOut = true;
+							}
+							else
+							{
+								if(biseqcstr(bstr,segundoPlano))
+								{
+									pipeline_set_wait(result,false);
+									seguir = false;
+								}
+							}
+						}
+					}
+					/*end_Ciclo  (l ,seguir);*/
+				 }
+				 pipel = redir = ampersand = false;
+				 bdestroy(bstr);
+			}
+		}
+		 if((archivoIn || archivoOut)  && seguir)
+		 {
+			 bstr = comandoValido(l,false);
+			 if(bstr == NULL)
+			 {
+				 printf("\n falta archivo de redirecciÃ³n de E/S\n");
+ 				 terminarConError(result,cmd,0);
+				 result = NULL;
+				 cmd = NULL;
+				 seguir = false;
+			 }
+			 else
+			 {
+				 bstring aux = NULL;
+				 if(archivoIn)
+				 {
+					 aux = scommand_get_redir_in(cmd);
+					 if(aux == NULL)
+					 {
+						 scommand_set_redir_in (cmd,bstr);
+					 }
+					 else
+					 {
+						 bdestroy(aux);
+						 scommand_set_redir_in (cmd,bstr);
+					 }
+					 archivoIn = false;
+				 	 pipel = ampersand = redir = true;
+				 }
+				 else
+				 {
+					 aux = scommand_get_redir_out(cmd);
+					 if(aux == NULL)
+					 {
+						 scommand_set_redir_out (cmd,bstr);
+					 }
+					 else
+					 {
+						 bdestroy(aux);
+						 scommand_set_redir_out (cmd,bstr);
+					 }
+				  	 archivoOut = false;
+					 ampersand = redir = true;
+				 }
+				 /*end_Ciclo  (l ,seguir);*/
+			 }
+		 }
+		
+	}
+	if(cmd != NULL && !scommand_is_empty(cmd))
+	{
+		pipeline_push_back(result,cmd);
+	}
+	lexer_destroy(l);	
+	assert(result == NULL || (pipeline_is_empty (result) || 
+		 pipeline_length (result) > 0));
+	
+	return result;
+}
+
+bstring comandoValido(Lexer *l, bool cadena)
+{
+	bstring aux = NULL;
+	bool matar = false;
+	assert(l != NULL && !lexer_is_off(l));
+	if(cadena)
+	{
+		lexer_next_to(l,"\""); 
+	}
+	else
+	{
+		lexer_next_to(l,"\n" pipe redirIn redirOut segundoPlano);
+	}
+	if(!lexer_is_off(l))
+	{
+		aux = lexer_item(l);
+		if(!cadena && blength(aux) == 0)
+		{
+			matar = true;
+		}
+		else
+		{
+			if(cadena)
+			{
+				lexer_next(l,"\"");
+				if(!lexer_is_off(l))
+				{
+					bstring bstr = lexer_item(l);
+					if(blength(bstr) % 2 == 0)
+					{
+						printf("\nFaltan comillas\n");
+						matar = true;
+					}
+					bdestroy(bstr);
+				}
+				else
+				{
+					matar = true;
+				}
+			}
+		}
+		if(matar)
+		{
+			bdestroy(aux);
+			aux = NULL;
+		}
+	}
+	return aux;
+}
+	
+void limpiarPipeline(pipeline *p)
+{
+	scommand* aux = NULL;
+	unsigned int n = 0;
+	assert(p != NULL);
+	
+	while(n < pipeline_length(p))
+	{
+		aux = pipeline_front (p);
+		limpiarScommand(aux);
+		pipeline_pop_front(p);
+		n++;
+	}
+	pipeline_destroy (p);
+	p = NULL;
+	assert( p == NULL);
+}
+
+void limpiarScommand(scommand *s)
+{
+	bstring aux = NULL;
+	unsigned int n = 0;
+	assert(s != NULL);
+	
+	while(n < scommand_length(s))
+	{
+		aux = scommand_front (s);
+		bdestroy(aux);
+		scommand_pop_front(s);
+		n++;
+	}
+	scommand_destroy (s);
+	s = NULL;
+	assert(s == NULL);
+}
+
+
+
+void terminarConError(pipeline *p, scommand *s, int error)
+{
+	assert(p != NULL && s != NULL);
+	limpiarPipeline(p);
+	limpiarScommand(s);
+	p = NULL;
+	s = NULL;	assert(p == NULL && s == NULL);
+}
+
+void end_Ciclo ( Lexer *l , bool seguir )
+{
+	/* Inicialización de Variables */
+	bstring bstr = NULL;
+	
+	/* Precondición */
+	assert ( l != NULL );
+	
+	/* Chequeo que si hay BLANK termine */
+	lexer_next_char(l,"\n");
+	bstr = lexer_item(l);
+	if (bstr != NULL ) 
+		seguir = false;
+	bdestroy (bstr);
+	bstr = NULL;
+}

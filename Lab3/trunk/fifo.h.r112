@@ -1,0 +1,7 @@
+#ifndef FIFO_H
+#define FIFO_H
+
+extern typedef struct _fifo_t* fifo;
+extern struct file_operations fifo_fops;
+
+#endif /* FIFO_H */

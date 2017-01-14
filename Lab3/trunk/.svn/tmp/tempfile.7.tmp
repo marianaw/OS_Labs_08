@@ -1,0 +1,62 @@
+#ifndef FIFO_H
+#define FIFO_H
+
+
+extern typedef struct _fifo_t * fifo;
+extern struct file_operations fifo_fops;
+
+#include "bool.h"
+
+
+typedef struct _fifo_t * fifo_t;
+
+
+/**
+ * fifo_create - Crea un nuevo buffer circular.
+ *
+ * @size: Tamaño del buffer de fifo.
+ *
+ * Resultado: Un nuevo fifo en caso de éxito o NULL en caso de 
+ * error.
+ * 
+ * */
+
+void fifo_create(const unsigned int size );
+
+
+/**
+ * fifo_destroy - Destruye un buffer circular.
+ *
+ * @fifo: El fifo a destruir.
+ * 
+ * */
+
+void fifo_destroy(void);
+
+
+/**
+ * fifo_enqueue - Encola un byte.
+ *
+ * @fifo: 	El fifo donde ingreso el byte.
+ * @buf: 	Puntero al bite.
+ * 
+ * Resultado: Devuelve el false si no hubo error
+ * 
+ * */
+
+bool fifo_enqueue(const char buf);
+
+
+/**
+ * fifo_dequeue - Decola un byte.
+ *
+ * @fifo: 	El fifo donde saco el byte.
+ * @buf: 	Puntero a los datos.
+ *
+ * Resultado: Devuelve el false si no hubo error
+ * 
+ * */
+
+bool fifo_dequeue(char *buf);
+
+#endif /* FIFO_H */

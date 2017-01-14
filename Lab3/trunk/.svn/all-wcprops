@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/2008/so/grupo12/svn/!svn/ver/157/Lab3/trunk
+END
+informe
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/2008/so/grupo12/svn/!svn/ver/151/Lab3/trunk/informe
+END
+bool.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/2008/so/grupo12/svn/!svn/ver/145/Lab3/trunk/bool.h
+END
+fifo.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/2008/so/grupo12/svn/!svn/ver/156/Lab3/trunk/fifo.c
+END
+main.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/2008/so/grupo12/svn/!svn/ver/156/Lab3/trunk/main.c
+END
+fifo_ops.c
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/2008/so/grupo12/svn/!svn/ver/157/Lab3/trunk/fifo_ops.c
+END
+fifo.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/2008/so/grupo12/svn/!svn/ver/149/Lab3/trunk/fifo.h
+END
+fifo_ops.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/2008/so/grupo12/svn/!svn/ver/134/Lab3/trunk/fifo_ops.h
+END
+debug.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/2008/so/grupo12/svn/!svn/ver/156/Lab3/trunk/debug.h
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/2008/so/grupo12/svn/!svn/ver/120/Lab3/trunk/Makefile
+END

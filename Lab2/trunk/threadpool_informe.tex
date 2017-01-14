@@ -1,0 +1,167 @@
+\documentclass[a4paper,12pt]{report}
+
+\usepackage{t1enc}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\lstset{
+language=C++,                % choose the language of the code
+basicstyle=\footnotesize,  % the size of the fonts that are used for the code
+showstringspaces=false,    % underline spaces within strings
+numbers=left,              % where to put the line-numbers
+% numberstyle=\footnotesize, % the size of the fonts that are used for the line-numbers
+numbersep=5pt,                   % how far the line-numbers are from the code
+% backgroundcolor=\color{green}, % choose the background color. You must add \usepackage{color}
+showspaces=false,                % show spaces within strings adding particular underscores
+showtabs=false,                  % show tabs within strings adding particular underscores
+tabsize=4
+% escapeinside={\%*}{*)}         % if you want to add a comment within your code
+}
+
+\begin{document}
+\author{Vargas Vieyra Mariana  \\ Kondrasky Alejandro \\ Soldevila Raffa Mallku Ernesto}
+\title{Laborat\'{o}rio 2 : Threadpool}
+\date{}
+\maketitle
+
+\section{Introducci\'{o}n}
+La cantidad de procesos que podemos ejecutar esta limitada por la cantidad de procesadores que tenemos, sin embargo, es posible simular la concurrencia con ciertas t\'{e}cnicas y herramientas, una de ellas, los threads.
+\smallskip
+
+Hemos aprendido que en C podemos hacer uso de los threads, los cuales van ejecutando partes de un proceso, para acelerar su ejecuci\'{o}n , haciendo m\'{a}s eficiente el desarrollo de \'{e}sta o bien para permitir acciones paralelas a un mismo proceso ( ej cargar varias paginas en un navegador con tabs (pesta\~{n}as) o realizar descargas).
+\smallskip
+
+A continuaci\'{o}n, se explicar\'{a}n en detalle la implementaci\'{o}n de los m\'{o}dulos, funciones, y otros.
+
+\smallskip
+
+\section{ Tad ThreadPool : Thread\_pool}
+
+Una threadpool se implementa teniendo en cuenta ciertas cuestiones. Como ya dijimos, cada thread se encarga de ejecutar una porci\'{o}n de c\'{o}digo, que llamaremos "tarea".Cada tarea estar\'{a} guardada en una queue, y ordenada de acuerdo a su prioridad. Por otro lado, tendremos un vector de threads: el primero toma la primera tarea y la realiza, y as\'{i} sucesivamente hasta que la queue de tareas est\'{e} vac\'{i}a.
+\smallskip
+
+\subsection*{Implementaci\'{o}n}
+La estructura consta de:
+
+\begin{itemize}
+	\item un tama\~{n}o de pool (cantidad de threads)
+	\item tama\~{n}o de queue (cantidad de tareas)
+	\item vector de threads
+	\item queue de tareas
+\end{itemize}
+
+Hay tres funciones principales encargadas de crear, destruir, y colocar una tarea en la task queue. Fue necesaria la funci\'{o}n auxiliar thread\_pool\_task la que consiste en sacar una task de la cola de tareas, tomar su funci\'{o}n, y ejecutarla junto a sus argumentos. Esta es asociada a cada uno de los threads completando as\'{i} la thread\_pool\_create, que tiene como objetivo dar inicio y preparar los threads para que ejecuten tareas.
+\smallskip
+
+Otro punto importante es que los threads pueden ir intercalando su ejecuci\'{o}n si las operaciones que est\'{a}n realizando no son at\'{o}micas.
+\smallskip
+
+En cuanto al n\'{u}mero de threads disponibles, cabe aclarar que puede ser mayor, igual o menor a la cantidad de tareas de la task queue; el programa funciona igual ya que los hilos no se destruyen despu\'{e}s de la realizaci\'{o}n de una task sino que se mantienen a la espera de nuevas tareas hasta que les enviemos la ultima tarea ,una bomba marca acme ( ver el c\'{o}digo de thread\_pool\_destroy) , la cual lo destruye.
+\smallskip
+
+De este modo, se completa el mecanismo de desarrollo de una tarea grande o "principal", dividi\'{e}ndola en tareas m\'{a}s peque\~{n}as que cada thread se va a encargar de ejecutar.
+\smallskip
+
+
+\section{ Tad Cola de tareas : Task\_queue}
+
+El TAD task\_queue consiste en una cola de tareas, empleada desde el TAD thread\_pool para almacenar los trabajos que deber\'{a}n ejecutar los hilos. Dado que se trata de una cola que ser\'{a} accedida concurrentemente por varios threads, se presenta la necesidad de manipular los accesos concurrentes a fin de mantener la consistencia de la estructura de datos. Se encapsul\'{o} esta funcionalidad en un TAD aparte que contiene la cola de tareas (conc\_queue). As\'{i}, en un nivel de abstracci\'{o}n superior (desde la task\_queue), solamente faltaba sincronizar los hilos productores y consumidores que acced\'{i}an a la cola en el nivel de abstracci\'{o}n inferior (la conc\_queue). 
+\smallskip
+
+El modelo para solucionar esta situaci\'{o}n cuenta con 2 sem\'{a}foros: uno contabiliza tareas encoladas, el otro contabiliza lugares libres en la cola. As\'{i} al inicializarlos, el primero se setea en 0 y el segundo se setea con el tama\~{n}o de la cola. Luego, un hilo que pretende encolar una tarea efectuar\'{a} una operaci\'{o}n wait sobre el sem\'{a}foro que contabiliza lugares vac\'{i}os y una operaci\'{o}n post sobre el sem\'{a}foro que contabiliza tareas encoladas. Un hilo que pretenda desencolar una tarea realizar\'{a} el proceso inverso. Controlamos as\'{i} que un productor no pueda encolar hasta que no se libere un lugar, en una cola llena, y que un consumidor no pueda desencolar cuando no hay tareas en cola.
+\smallskip
+
+Para implementar est\'{a} soluci\'{o}n se emple\'{o} la interfaz "semaphore.h", implementaci\'{o}n POSIX de un sem\'{a}foro.
+Se implement\'{o} el c\'{o}digo siguiendo una t\'{e}cnica de programaci\'{o}n defensiva. Aparte del cheque\'{o} de las pre y post condiciones definidas para cada operaci\'{o}n del TAD, se cheque\'{o} constantemente el valor de retorno de las operaciones sobre sem\'{a}foros, por c\'{o}digos de error. Tambi\'{e}n se tuvo en consideraci\'{o}n el chequeo de errores de cada operaci\'{o}n de la conc\_queue. Para implementar esto se necesit\'{o} la interfaz ``assert.h'' (para controlar el cumplimiento de las aserciones) y ``errno.h'', para poder acceder al valor de la variable errno.
+\smallskip
+
+\section{ Tad Cola Concurrente : Conc\_queue}
+
+Es una cola concurrente que ser\'{a} accedida por varios threads,  la cual manipula estos accesos para mantener la consistencia de dicha cola. Esta tiene como objetivo de permitir a un solo thread acceder a la cola para modificarla ( encolar , descolar , mapear ).
+\smallskip
+
+Para realizar este Tad me base en el paper presentado en el header entregado en el kick\_start :
+\smallskip
+\subsection*{Estudio Previo}
+
+Se realizaron estudios previos del funcionamiento de los mutex de la librer\'{i}a ``pthread.h'' POSIX , los cuales fueron utilizados para proteger las secciones cr\'{i}ticas. Este consistido en la lectura y prueba de los ejemplos entregados
+en el tutorial de pthreads, especialmente el ejemplo de productor-consumidor que fue 
+esencial para definir el funcionamiento de este Tad y la cola de tareas Task\_Queue.
+En estas pruebas vi :
+\begin{itemize}
+	\item 	La funci\'{o}n sched\_yield , la cual luego fue convertida a una funci\'{o}n random con 50\% de probabilidad.
+	\item	El uso de la flag -S para obtener el c\'{o}digo Assembler , el cual presento situaciones interesantes\footnote{En la funci\'{o}n IncrDecr del ejemplo programTopology.c vi que cuando se le quitaban los sched\_yield al 
+	for x++; x--; se cancelaban entre si . Esto da a pensar que no siempre la compilaci\'{o}n es directa.Se presentaron varias curiosidades mas de este tipo..
+	}.
+	Fue muy sutil para entender el concepto de atomicidad de una sentencia o funci\'{o}n.
+	\item	El estudio de la relaci\'{o}n productor consumidor ayudo mucho a entender el funcionamiento de la cola concurrente.
+\end{itemize}
+
+
+\smallskip
+
+En este encontr\'{e}  gran cantidad de informaci\'{o}n acerca de Algoritmos de tipo Non-Blocking,
+teniendo estas una mayor performance en variados entornos. 
+Encontr\'{e} el algoritmo presentado en la Fig.4, pag.10 la soluci\'{o}n ideal ya que era una 
+cola con un funcionamiento muy similar a la que se utilizo en el laboratorio anterior ( G\_Queue)
+y  adem\'{a}s era de muy simple implementaci\'{o}n , cumpliendo con las necesidades de el Tad.
+
+\smallskip
+
+\subsection*{Implementaci\'{o}n}
+
+Al momento de la implementaci\'{o}n se tuvo muy en cuenta todo lo definido en el header desde el principio.
+Cosas tales como manejos de errores , precondiciones , poscondiciones fueron seguidas con la mayor precisi\'{o}n
+posible. Lo cual me llevo a realizar funciones internas con manejo de errores y un constructor con manejo de
+error interno.
+\smallskip
+
+Luego la definici\'{o}n de las funciones principales de encolado , descolado y mapeo fueron simples por que lo \'{u}nico 
+que se deb\'{i}a tener en cuenta era la protecci\'{o}n de la secci\'{o}n critica que proteg\'{i}a encolado , descolado y mapeo 
+en la cola concurrente.
+\smallskip
+
+Inicialmente se decidi\'{o} utilizar 2 mutex , uno para encolado y otro para descolado , ya que por propiedades
+de la G\_Queue, la cual era una serie de nodos doblemente apuntados, era seguro encolar elementos por la cola
+y decolarlos de la cabeza. Estas operaciones fueron consideradas atomicas. 
+Luego se comprob\'{o} que esto era falso, ya que dentro de la estructura de la cola se encontraba una variable Unsigned Int 
+la cual contenia el tama\~{n}o de la cola , generando situaciones tales como que el thread del main encole un elemento
+estando la cola en un tama\~{n}o > 0 y ,antes de que se aumente el contador , venga otro thread y descole un elemento. 
+Esto produc\'{i}a que se devolvieran elementos nulos en casos donde se produc\'{i}a altos niveles de interleaving.
+\smallskip
+
+Los Errores que mostraban mapas de memoria y segmentation fault se presume que fueron causados por intentos de
+escritura simultanea al contador que llevaba el tama\~{n}o de la cola.
+\smallskip
+
+Esto me obligo a utilizar un \'{u}nico mutex , el cual bloquearia tanto el ``enqueue'' como el ``dequeue'' de elemementos
+al entrar en la secci\'{o}n critica de cualquiera de estas funciones.
+\smallskip
+
+\section{ Conclusi\'{o}n }
+
+Quedan algunos aspectos a recalcar en cuanto a la organizaci\'{o}n general del trabajo: en primer lugar, la utilizaci\'{o}n de la glib, indispensable para la implementaci\'{o}n del tad conc\_queue, el uso de mutex con el fin de trabajar sobre las zonas cr\'{i}ticas del c\'{o}digo y semaforos para sincronizar los threads, para lo cual nos fueron de gran ayuda los ejemplos dados en clase. Por otro lado, debemos mencionar, que este trabajo es susceptible de ser utilizado con otros ``c\'{o}digos de tarea'', en este caso lo hemos probado con el dado en clase (is\_prime).
+\smallskip
+
+Cabe agregar que el uso de m\'{o}dulos de testeo no fue tan beneficioso en comparaci\'{o}n al Laboratorio anterior , ya que el proceso de depuraci\'{o}n requiri\'{o} mas de introducirse en las iteraciones entre los threads utilizando herramientas tales como
+gdb , mensajes de error impresos con perror y adicionalmente task\_queue\_print la cual fue de gran utilidad para ver en 
+``tiempo real'' la manipulaci\'{o}n de las tareas. Tambi\'{e}n se utilizaron scripts Shell para realizar ejecuciones masivas de un n\'{u}mero primo lo cual tenia como objetivo probar la consistencia del funcionamiento. Adicionalmente se probo el c\'{o}digo de ejecuci\'{o}n en varias maquinas en el laboratorio , proporcionado en el moodle. Todos estos elementos mas un modulo de test adicional para la conc\_queue est\'{a}n en el directorio branches.
+
+\section*{Bibliograf\'{i}a}
+ \begin{itemize}
+	\item Nonblocking Algorithms and Preemption-Safe Locking on Multiprogrammed Shared Memory Multiprocessors
+	\begin{verbatim}
+	http://www.cs.rochester.edu/u/scott/papers/1998\_JPDC\_nonblocking.pdf
+	\end{verbatim} 
+	\item Advanced Linux Programming.
+	\begin{verbatim}
+	http://www.advancedlinuxprogramming.com/
+	\end{verbatim} 
+	\item Tutorial de Pthreads
+	\begin{verbatim}
+	http://www.famaf.proed.unc.edu.ar/file.php/9/pthreads.html
+	\end{verbatim} 
+ \end{itemize}
+
+\smallskip
+
+\end{document}

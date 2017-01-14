@@ -1,0 +1,8 @@
+run_tests.o: run_tests.c test_thread_pool.h test_primality_checker.h \
+  test_task_queue.h
+test_primality_checker.o: test_primality_checker.c \
+  test_primality_checker.h ../primality_checker.h
+test_task_queue.o: test_task_queue.c test_task_queue.h ../task_queue.h \
+  ../task.h
+test_thread_pool.o: test_thread_pool.c test_thread_pool.h \
+  ../thread_pool.h ../task.h

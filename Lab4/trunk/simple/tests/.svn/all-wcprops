@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/2008/so/grupo12/svn/!svn/ver/189/Lab4/trunk/simple/tests
+END
+test_part1.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/2008/so/grupo12/svn/!svn/ver/189/Lab4/trunk/simple/tests/test_part1.sh
+END
+test_part2.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/2008/so/grupo12/svn/!svn/ver/177/Lab4/trunk/simple/tests/test_part2.sh
+END

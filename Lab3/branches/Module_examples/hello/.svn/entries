@@ -1,0 +1,52 @@
+8
+
+dir
+200
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn/Lab3/branches/Module_examples/hello
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn
+
+
+
+2008-10-03T15:29:54.831573Z
+107
+alk0107
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+b088ff67-a23e-4100-b484-3c7d8c797334
+
+hello.c
+file
+
+
+
+
+2008-10-13T17:26:26.000000Z
+16aea5175140f4fe7a6e98a487c6f880
+2008-10-03T15:29:54.831573Z
+107
+alk0107
+
+Makefile
+file
+
+
+
+
+2008-10-11T21:40:48.000000Z
+85d182a7728a93362f57357ffe1aa783
+2008-10-03T15:29:54.831573Z
+107
+alk0107
+

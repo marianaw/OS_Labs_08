@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/2008/so/grupo12/svn/!svn/ver/188/Lab1/trunk
+END
+parser.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/2008/so/grupo12/svn/!svn/ver/66/Lab1/trunk/parser.h
+END
+informe_baash.odt
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/2008/so/grupo12/svn/!svn/ver/188/Lab1/trunk/informe_baash.odt
+END
+execute.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/2008/so/grupo12/svn/!svn/ver/187/Lab1/trunk/execute.c
+END
+in.txt
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/2008/so/grupo12/svn/!svn/ver/55/Lab1/trunk/in.txt
+END
+out.txt
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/2008/so/grupo12/svn/!svn/ver/69/Lab1/trunk/out.txt
+END
+parser.c.malku
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/2008/so/grupo12/svn/!svn/ver/55/Lab1/trunk/parser.c.malku
+END
+builtin.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/2008/so/grupo12/svn/!svn/ver/187/Lab1/trunk/builtin.c
+END
+execute.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/2008/so/grupo12/svn/!svn/ver/187/Lab1/trunk/execute.h
+END
+parser.c.kondra
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/2008/so/grupo12/svn/!svn/ver/55/Lab1/trunk/parser.c.kondra
+END
+builtin.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/2008/so/grupo12/svn/!svn/ver/187/Lab1/trunk/builtin.h
+END
+baash.c
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/2008/so/grupo12/svn/!svn/ver/187/Lab1/trunk/baash.c
+END
+command.c
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/2008/so/grupo12/svn/!svn/ver/106/Lab1/trunk/command.c
+END
+command.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/2008/so/grupo12/svn/!svn/ver/55/Lab1/trunk/command.h
+END
+path_transform.c
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/2008/so/grupo12/svn/!svn/ver/187/Lab1/trunk/path_transform.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/2008/so/grupo12/svn/!svn/ver/55/Lab1/trunk/Makefile
+END
+parser.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/2008/so/grupo12/svn/!svn/ver/179/Lab1/trunk/parser.c
+END
+path_transform.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/2008/so/grupo12/svn/!svn/ver/187/Lab1/trunk/path_transform.h
+END

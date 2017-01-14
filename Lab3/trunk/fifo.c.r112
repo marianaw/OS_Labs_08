@@ -1,0 +1,16 @@
+#include "fifo.h"
+#include "rbuffer.h"
+
+struct _fifo_t
+{
+	rbuffer_t rbuffer;
+	
+};
+struct file_operations fifo_fops = {
+	.owner	=	THIS_MODULE,
+	.open	=	fifo_open,
+	.read	=	fifo_read,
+	.write	=	fifo_write,
+	.release=	fifo_release
+};
+

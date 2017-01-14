@@ -1,0 +1,67 @@
+8
+
+dir
+200
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn/Lab4/trunk
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn
+
+
+
+2008-11-16T20:18:18.581814Z
+199
+alk0107
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+b088ff67-a23e-4100-b484-3c7d8c797334
+
+simple.h
+file
+
+
+
+
+2008-11-05T23:09:10.000000Z
+667d9476314dae0ce55632a71fc1d4af
+2008-11-06T02:10:33.323545Z
+168
+mvv0107
+
+simple.c~
+file
+
+
+
+
+2008-11-07T01:55:45.000000Z
+5fef4a416dc44b9d86c8c50b9cd3aece
+2008-11-07T01:57:27.470049Z
+171
+mvv0107
+
+simple
+dir
+
+simple.c
+file
+
+
+
+
+2008-11-07T01:59:42.000000Z
+7a73adc5575e8d9592143f670e71e8dd
+2008-11-07T01:57:27.470049Z
+171
+mvv0107
+

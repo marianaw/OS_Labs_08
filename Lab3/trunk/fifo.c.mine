@@ -1,0 +1,33 @@
+#include "fifo.h"
+#include "rbuffer.h"
+#include <linux/socket.h>
+#include <linux/fs.h>
+#include <sys/types.h>
+#include <sys/ino.h>
+#define TAM 16
+
+struct _fifo_t
+{
+	rbuffer_t rbuffer;
+	
+};
+
+struct file_operations fifo_fops = {
+	.owner	=	THIS_MODULE,
+	.open	=	fifo_open,
+	.read	=	fifo_read,
+	.write	=	fifo_write,
+	.release=	fifo_release
+};
+
+static atomic_t fifo_open (struct inode * ip, struct file * fp){
+
+#ifdef DEBUG
+	printk (KERN_INFO, "abriendo file\n", file);
+#endif
+	return 0;
+}
+
+
+ssize_t fifo_read (struct file * fp, char * buf, size_t len, loff_t * offset){
+	

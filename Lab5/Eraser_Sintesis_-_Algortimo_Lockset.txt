@@ -1,0 +1,159 @@
+1 Introducción
+
+Eraser es un debugger de programas basados en sincronicacion atravez de locks
+Se chequea que todos los accesos a memoria compartida cumplan con una logica de
+bloqueo consistente.
+
+/*1.1 Definiciones
+
+Una Race condition ocurren cuando 2 threads acceden concurrentemente a una
+variable compartida ,  uno de ellos la intenta escribir , y no se esta usando
+un mecanismo para prveer en acceso simultaneo a memoria.*/
+  
+ 2.2 Inicialización y Lectura Compartida
+ 
+Se considerara que una variable compartida se termino de inicializar solo 
+cuando otro thread intente acceder a ella.
+
+Tambien , considerando que se puede leer simultaneamente una misma variable
+compartida de solo lectura sin generar una condicion de carrera , solo 
+reportaremos la variables ya inicializadas que fueron escritas por mas de 
+un thread.
+
+Figure 4 (pag 8 ) ilustra los estados que controlan las assignaciones de locks
+y condiciones de carrera. 
+Todas las variables no han sido accedidas por ningun thread se encuentran en
+estado Virgen.
+Las que fueron accedidas por un solo thread se encuentran en estado Exclusivo.
+En este estado todas la acciones de lectura y escritura por parte de este unico
+thread se consideran de inicialización.
+Cuando otro thread intenta leer esta variable se la lleva al estado Compartido.
+En este estado C(v) es actualizado , pero no se reporta ninguna condicion de 
+carrera , aun cuando C(v) = {} . De esta manera permitimos la lectura simultanea.
+Cuando un nuevo thread intenta escribir , estando la variable en estado Exclusivo
+o Compartido , se la lleva al estado Compartido-Modificado , en el cual C(v) es 
+actualizado y se reportan condiciones de carrera si C(v)  = {} .
+
+Se podrian generar algunos problemas tales como que antes de que un thread termine 
+de inicialización, venga otro thread y acceda a ella , considerandose asi la 
+inicialización terminada antes de que asi lo fuera y en caso de escritura mostrandolo
+como un error.
+
+2.3 Locks de lectura/escritura
+
+Para poder evaluar programas monoproductor-multiconsumidores se considerara
+que por cada variable v , un lock m la proteje. Queriendo decir que solo atravez
+de m se puede acceder para leer o escribir.
+
+Continuando con al figura 4 , solo cambiamos los chequeos que se realizan en
+el estado Modificado-Compartido:
+
+    locks_held(t): Conjunto de Locks de t en cuanlquier modo de acceso.
+    write_locks_held(t): Conjunto de Locks de t en modo de escritura.
+    C(v): Conjunto de todos los Locks para la variable v.
+    En cada lectura de v por el thread t,
+      C(v) = locks_held(t);
+      if (C(v) = { })then
+      	warning;
+    En cada escritura de v por el thread t,
+      C(v) = write_locks_held(t);
+      if (C(v) = { })then
+      	warning;
+      	
+Solo se remueven los locks cuando ocurre una escritura . Tambien cuando
+un lock es tomado por un escritor no protege al escritor de todos los
+otros thread lectores.
+
+3 Implementando Eraser:
+Eraser takes an unmodified program binary as input and adds
+instrumentation to produce a new binary that is functionally identical, but
+includes calls to the Eraser runtime to implement the Lockset algorithm.
+When a race is reported, Eraser indicates the file and line number at
+which it was discovered and a backtrace listing of all active stack frames. 
+The report also includes the thread ID, memory address, type of memory
+access, and important register values such as the program counter and
+stack pointer. 
+
+3.1 Representación del Conjunto de locks candidatos: 
+
+We represent each set of locks by a small integer, a
+lockset index into a table whose entries canonically represent the set of
+locks as sorted vectors of lock addresses.
+  New lockset indexes are created as a result of lock acquisitions, lock
+releases, or through application of the intersection operation. To ensure
+that each lockset index represents a unique set of locks we maintain a hash
+table of the complete lock vectors that is searched before a new lockset
+index is created.
+/*  For every 32-bit word in the data segment and heap, there is a corre-
+sponding shadow word that is used to contain a 30-bit lockset index and a
+2-bit state condition. In the Exclusive state, the 30 bits are not used to store
+a lockset index, but used instead to store the ID of the thread with
+exclusive access.
+  All the standard memory allocation routines are instrumented to allocate
+and initialize a shadow word for each word allocated by the program. When
+a thread accesses a memory location, Eraser finds the shadow word by
+adding a fixed displacement to the location’s address. */
+
+3.2 Performance (esto probablemente no valla) : 
+
+Performance was not a major goal in our implementation of Eraser and
+consequently there are many opportunities for optimization. Our experience suggests that
+differences in thread scheduling have little effect on Eraser’s results. 
+  In spite of our limited performance tuning, we have found that Eraser is
+fast enough to debug most programs and therefore meets the most essential
+performance criterion.
+
+3.3 Falsas Alarmas y Formas de evitarlo : 
+
+As expected, our experience with Eraser showed that it can produce false alarms.        
+Part of our research was aimed at finding effective annotations to
+suppress false alarms without accidentally losing useful warnings. 
+In our experience false alarms fell mainly into three broad categories:
+
+—Memory Reuse: False alarms were reported because memory is reused
+ without resetting the shadow memory. 
+
+—Private Locks: False alarms were reported because locks are taken
+ without communicating this information to the Eraser at runtime. 
+
+—Benign Races: True data races were found that did not affect the
+ correctness of the program.
+For each of these categories, we developed a program annotation to allow
+users of Eraser to eliminate the false report.
+
+For each of these categories, we developed a program annotation to allow
+users of Eraser to eliminate the false report. For benign races, we added
+    EraserIgnoreOn( )
+    EraserIgnoreOff( )
+which inform the race detector that it should not report any races in the
+bracketed code. To prevent memory reuse races from being reported, we
+added
+    EraserReuse(address, size)
+which instructs Eraser to reset the shadow memory corresponding to the
+indicated memory range to the Virgin state. Finally, the existence of
+private lock implementations can be communicated by annotating them
+with
+    EraserReadLock(lock)
+    EraserReadUnlock(lock)
+    EraserWriteLock(lock)
+    EraserWriteUnlock(lock)
+  We found that a handful of these annotations usually suffices to elimi-
+nate all false alarms.
+
+3.4 Efectividad y sensitividad : 
+
+Since Eraser uses a testing methodology it 
+cannot prove that a program is
+free from data races. But we believe that Eraser works well, compared to
+manual testing and debugging, and that Eraser’s testing is not very
+sensitive to the scheduler interleaving.
+
+4 Conclusión:   
+
+Programmers in the area of operating systems seem to view dynamic race
+detection tools as esoteric and impractical. Our experience leads us to
+believe instead that they are a practical and effective way to avoid data
+races, and that dynamic race detection should be a standard procedure in
+any disciplined testing effort for a multithreaded program.
+
+

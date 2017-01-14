@@ -1,0 +1,6 @@
+K 13
+svn:externals
+V 105
+threadpool https://cs.famaf.unc.edu.ar/materias/sistop/svn/trunk/Lab-ThreadPool/src/threadpool_kickstart
+
+END

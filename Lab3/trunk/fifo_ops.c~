@@ -1,0 +1,105 @@
+#include <linux/kernel.h>
+#include <linux/errno.h>
+#include <linux/fs.h>
+#include <linux/module.h>
+#include <linux/slab.h>
+#include <linux/wait.h>			/* cola de espera */
+#include <asm/uaccess.h>
+
+#define ASSERT(p)	BUG_ON(!(p))
+#define MALLOC(s, u)	kmalloc((s)*(u), GFP_KERNEL)
+
+#include "debug.h"
+#include "fifo_ops.h"
+
+
+/* Declaraciòn de la fifo */
+/*fifo_t fifo = NULL;*/
+
+/* Funciones de dispositivo */
+
+static int mod_fifo_open(struct inode *ip, struct file *fp)
+{
+	return 0;
+}
+
+
+static ssize_t mod_fifo_read(struct file *fp, char *buf, size_t count, loff_t *offset)
+{
+	/* Inicialización de variables */
+	void* fbuf = NULL;
+	unsigned long error = count;
+	int cant_bytes = 0;
+	
+	/* Copio datos al buffer del usuario hasta completar lo pedido */
+	cant_bytes = (int) count;
+	while(cant_bytes > 0 && !error)
+	{
+		 if(!fifo_dequeue((char *) fbuf))
+		 {
+			  error = copy_to_user (buf, fbuf , 1);
+		 	  cant_bytes = cant_bytes - 1;
+		 }
+	}
+	/*while(error){
+		if(!fifo_dequeue(fifo ,(char *) fbuf))
+			error = copy_to_user (buf, fbuf , error);
+	}*/
+
+	/* Poscondiciòn */
+	ASSERT ( !error);
+	
+	return error;
+}
+
+
+static ssize_t mod_fifo_write(struct file *fp, const char *buf, size_t count, loff_t *offset)
+{
+	/* Inicialización de variables */
+	void* fbuf = NULL;
+	unsigned long error = count;
+	int cant_bytes = 0;
+	 
+	/* Copio datos al buffer del kernel hasta completar lo pedido */
+	cant_bytes = (int) count;
+	while(cant_bytes > 0 && !error)
+	{
+		/*Pedimos memoria para almacenar el byte de información*/
+		fbuf = (void*)MALLOC(1,sizeof(char));
+		/*Traemos el byte de información desde el espacio de usuario*/
+		error = copy_from_user (fbuf , buf  , error);
+		/*Lo almacenamos en nuestro fifo*/
+		if(fifo_enqueue(fbuf))
+			  cant_bytes = 0;/*Hubo error, terminamos el ciclo*/
+		else
+			  cant_bytes = cant_bytes - 1;
+	}
+	
+	/* Poscondiciòn */
+	ASSERT ( !error);
+	
+	return error;
+}
+
+
+static int mod_fifo_release(struct inode *ip, struct file *fp)
+{
+	return 0;
+}
+
+
+/**
+ * La estructura que contiene punteros a cada una de las operaciones que se
+ * pueden realizar sobre /dev/fifo. Esta es la única variable que exporta el
+ * módulo. Así, podremos cambiar hasta los nombres de las funciones que
+ * implementan cada operación y se preservará la abstracción.
+ */
+
+
+struct file_operations mod_fifo_fops = {
+	.owner	=	THIS_MODULE,
+	.open	=	mod_fifo_open,
+	.read	=	mod_fifo_read,
+	.write	=	mod_fifo_write,
+	.release=	mod_fifo_release
+};

@@ -1,0 +1,48 @@
+<html>
+<body>
+<table border=1>
+	<tr><th><code>fwrite()</code> size</th><th colspan=3><code>fifo_write()</code> size</th></tr>
+	<tr><th></th><th>fwrite</th><th>fwrite;fflush</th><th>fopen;fwrite;fclose</th></tr>
+
+	<tr><td>1</td><td>-</td><td>1</td><td>1</td></tr>
+	<tr><td>2</td><td>-</td><td>2</td><td>2</td></tr>
+	<tr><td>4</td><td>-</td><td>4</td><td>4</td></tr>
+	<tr><td>8</td><td>-</td><td>8</td><td>8</td></tr>
+	<tr><td>16</td><td>-</td><td>16</td><td>16</td></tr>
+	<tr><td>32</td><td>-</td><td>32</td><td>32</td></tr>
+	<tr><td>64</td><td>-</td><td>64</td><td>64</td></tr>
+	<tr><td>128</td><td>-</td><td>128</td><td>128</td></tr>
+	<tr><td>256</td><td>-</td><td>256</td><td>256</td></tr>
+	<tr><td>512</td><td>-</td><td>512</td><td>512</td></tr>
+	<tr><td>1024</td><td>-</td><td>1024</td><td>1024</td></tr>
+	<tr><td>2048</td><td>4096</td><td>2048</td><td>2048</td></tr>
+	<tr><td>4096</td><td>4096</td><td>4096</td><td>4096</td></tr>
+	<tr><td>8192</td><td>4096</td><td></td><td>8192</td></tr>
+	<tr><td>16384</td><td></td><td></td><td>16384</td></tr>
+	<tr><td>32768</td><td></td><td></td><td>32768</td></tr>
+	<tr><td>65536</td><td></td><td></td><td>65536</td></tr>
+</table>
+<table border=1>
+	<tr><th><code></code></th><th colspan=3><code>Performance KB/s</code> </th></tr>
+	<tr><th></th><th>fwrite</th><th>fwrite;fflush</th><th>fopen;fwrite;fclose</th></tr>
+
+	<tr><td>1</td><td>2576.682058</td><td>156.050256</td><td>19.615597</td></tr>
+	<tr><td>2</td><td>152.599812</td><td>177.492276</td><td>86.701514</td></tr>
+	<tr><td>4</td><td>2895.663454</td><td>531.969222</td><td>171.101621</td></tr>
+	<tr><td>8</td><td>3135.032103</td><td>582.500746</td><td>256.147541</td></tr>
+	<tr><td>16</td><td>2498.001599</td><td>603.934756</td><td>396.493098</td></tr>
+	<tr><td>32</td><td>1437.707030</td><td>580.531302</td><td>462.592889</td></tr>
+	<tr><td>64</td><td>168.929877</td><td>629.209411</td><td>442.891764</td></tr>
+	<tr><td>128</td><td>159.799752</td><td>632.924211</td><td>546.070911</td></tr>
+	<tr><td>256</td><td>147.197536</td><td>627.591955</td><td>442.128868</td></tr>
+	<tr><td>512</td><td>161.204624</td><td>622.766603</td><td>504.425323</td></tr>
+	<tr><td>1024</td><td>2724795.640327</td><td>603.637641</td><td>540.279454</td></tr>
+	<tr><td>2048</td><td>3361344.537815</td><td>619.036550</td><td>539.279646</td></tr>
+	<tr><td>4096</td><td>666.811698</td><td>627.992877<td>512.844774</td></tr>
+	<tr><td>8192</td><td>673.933410</td><td>623.954048</td><td>523.071918</td></tr>
+	<tr><td>16384</td><td>664.200325</td><td>609.677146</td><td>531.680074</td></tr>
+	<tr><td>32768</td><td>659.174965</td><td>617.064110</td><td>526.905334</td></tr>
+	<tr><td>65536</td><td>664.019070</td><td>613.354283</td><td>525.445447</td></tr>
+</table>
+</body>
+</html>

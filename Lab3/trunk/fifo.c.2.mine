@@ -1,0 +1,158 @@
+#include <linux/kernel.h>
+#include <linux/errno.h>
+#include <linux/fs.h>
+#include <linux/string.h> 	/* memset */
+#include <linux/wait.h>		/* cola de espera */
+#include <asm/semaphore.h>/* semaforos */
+#include <linux/types.h>
+
+#define MALLOC(s, u)	kmalloc((s)*(u), GFP_KERNEL)
+#define FREE(p)		kfree(p)
+#define ASSERT(p)	BUG_ON(!(p))
+
+#include "debug.h"
+#include "rbuffer/rbuffer.h"
+#include "fifo.h"
+#include <linux/socket.h>
+#include <linux/fs.h>
+#include <sys/types.h>
+#include <sys/ino.h>
+#define TAM 16
+
+/* Cola de Espera */
+wait_queue_head_t wait_queue;
+DECLARE_WAIT_QUEUE_HEAD(wait_queue);
+
+/* Invariante de representación */
+#define inv_rep(b)	(!b || b->buffer)
+
+
+struct _fifo_t{
+	rbuffer_t buffer;
+	struct semaphore *sem_empty;
+	struct semaphore *sem_full;
+	struct semaphore *mutex;
+};
+fifo_t fifo;
+/* Funciones Publicas */
+
+void fifo_create(const unsigned int size )
+{
+	/* Inicialización de variables */
+	/*fifo_t	result = NULL;*/
+
+};
+
+struct file_operations fifo_fops = {
+	.owner	=	THIS_MODULE,
+	.open	=	fifo_open,
+	.read	=	fifo_read,
+	.write	=	fifo_write,
+	.release=	fifo_release
+};
+
+	fifo = (fifo_t) MALLOC(1, sizeof(struct _fifo_t));
+	
+	/* Entramos al if si result != NULL */
+	if (fifo) {
+		
+		/* Inicialización de Semaforos */
+		fifo->sem_empty = MALLOC(1,sizeof(struct semaphore));
+		fifo->sem_full = MALLOC(1,sizeof(struct semaphore));
+		fifo->mutex = MALLOC(1,sizeof(struct semaphore));
+		sema_init ( fifo->sem_empty ,size);
+		sema_init ( fifo->sem_full , 0);
+		sema_init ( fifo->mutex , 1);
+
+static atomic_t fifo_open (struct inode * ip, struct file * fp){
+
+#ifdef DEBUG
+	printk (KERN_INFO, "abriendo file\n", file);
+#endif
+	return 0;
+}
+
+
+ssize_t fifo_read (struct file * fp, char * buf, size_t len, loff_t * offset){
+
+		/* Creo el Buffer */
+		fifo->buffer = rbuffer_create (size);
+		
+		/* Manejo de errores */
+		if (!fifo->buffer) {
+			FREE((void*) fifo);
+			fifo = NULL;
+		}
+	}
+
+	/* Poscondición */
+	ASSERT(inv_rep(fifo));
+}
+
+void fifo_destroy(void)
+{
+	/* Precondición */
+	ASSERT(fifo!=NULL);
+	ASSERT(inv_rep(fifo));
+
+	/* Destrucción de los datos  */
+	FREE((void *) fifo->buffer);
+	fifo->buffer = NULL;
+	FREE((void *) fifo);
+	fifo = NULL;
+
+	/* Poscondición */
+	ASSERT(inv_rep(fifo));
+}
+
+
+bool fifo_enqueue(const char *buf)
+{	
+	/* Inicialización de Variables */
+	bool result = false;
+	/* Precondición */
+	ASSERT (fifo != NULL );
+	
+	/*  Redusco el semaforo de empty */
+	if (down_interruptible(fifo->sem_empty))
+		return true;
+		
+	/* Cargo el byte en el buffer 
+	wait_event (wait_queue , false );*/
+	if (down_interruptible(fifo->mutex))
+		return true;
+	result = rbuffer_insert ( fifo->buffer , (const byte) *buf );
+	up(fifo->mutex);
+	/*wake_up( wait_queue);*/
+	
+	up(fifo->sem_full);
+	
+	return result;
+}
+
+
+bool fifo_dequeue(char *buf)
+{
+	/* Inicialización de Variables */
+	bool result = false;
+
+	/* Precondición */
+	ASSERT (fifo != NULL );
+	
+	/*  Redusco el semaforo de vacios */
+	if (down_interruptible(fifo->sem_full))
+		return true;
+		
+	/* Tomo el byte del buffer 
+	wait_event (wait_queue , false );*/
+	if (down_interruptible(fifo->mutex))
+		return true;
+	result = rbuffer_remove ( fifo->buffer , (byte *) buf );
+	up(fifo->mutex);
+	/*wake_up( wait_queue);*/
+
+	/* Aumento el semaforo de llenos */
+	up(fifo->sem_empty);
+
+	return result;
+}

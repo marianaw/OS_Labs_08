@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/materias/sistop/svn/!svn/ver/534/trunk/Lab-ThreadPool/src/threadpool_kickstart/x86_64
+END
+conc_queue.o
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/materias/sistop/svn/!svn/ver/534/trunk/Lab-ThreadPool/src/threadpool_kickstart/x86_64/conc_queue.o
+END
+task_queue.o
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/materias/sistop/svn/!svn/ver/534/trunk/Lab-ThreadPool/src/threadpool_kickstart/x86_64/task_queue.o
+END
+thread_pool.o
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/materias/sistop/svn/!svn/ver/534/trunk/Lab-ThreadPool/src/threadpool_kickstart/x86_64/thread_pool.o
+END

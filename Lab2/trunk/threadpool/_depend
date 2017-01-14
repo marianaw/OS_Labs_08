@@ -1,0 +1,7 @@
+conc_queue.o: conc_queue.c conc_queue.h
+main.o: main.c primality_checker.h
+primality_checker.o: primality_checker.c utils.h thread_pool.h task.h \
+  primality_checker.h
+task.o: task.c task.h
+task_queue.o: task_queue.c conc_queue.h task_queue.h task.h
+thread_pool.o: thread_pool.c task_queue.h task.h thread_pool.h

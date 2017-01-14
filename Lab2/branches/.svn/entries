@@ -1,0 +1,34 @@
+8
+
+dir
+200
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn/Lab2/branches
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn
+
+
+
+2008-09-29T16:45:28.903507Z
+98
+alk0107
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+b088ff67-a23e-4100-b484-3c7d8c797334
+
+Unit_Testing
+dir
+
+Script_Testers
+dir
+

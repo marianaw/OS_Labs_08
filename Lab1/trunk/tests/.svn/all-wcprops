@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/2008/so/grupo12/svn/!svn/ver/69/Lab1/trunk/tests
+END
+test_scommand.c
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/test_scommand.c
+END
+test_execute.c
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/2008/so/grupo12/svn/!svn/ver/69/Lab1/trunk/tests/test_execute.c
+END
+out.txt
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/out.txt
+END
+test_pipeline.c
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/test_pipeline.c
+END
+test_scommand.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/test_scommand.h
+END
+run_tests.c
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/run_tests.c
+END
+test_execute.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/test_execute.h
+END
+test_path_transform.c
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/2008/so/grupo12/svn/!svn/ver/65/Lab1/trunk/tests/test_path_transform.c
+END
+test_pipeline.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/test_pipeline.h
+END
+test_path_transform.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/test_path_transform.h
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/2008/so/grupo12/svn/!svn/ver/61/Lab1/trunk/tests/Makefile
+END

@@ -1,0 +1,45 @@
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/fs.h>
+
+#define DEBUG
+#include "debug.h"
+#include "fifo.h"
+
+MODULE_AUTHOR("Kondrasky Alejandro - Soldevila Mallku - Vargas Mariana");
+MODULE_LICENSE("GPL");
+
+static const char *NAME = "fifo";
+static const int MAJOR;
+static const int size;
+
+module_param(MAJOR, int, S_IRUGO);
+module_param(size, int, S_IRUGO);
+
+
+int fifo_init(void)
+{
+	int error = 0;
+	
+	error = register_chrdev(MAJOR, NAME, &fifo_fops);
+	if (error == 0) {
+		dprintk("%s : Carga completada satisfactoriamente.\n", NAME);
+	} else {
+		dprintk("%s: No se pudo registrar el dispositivo '%s' con"
+			" major: %d.\n", NAME, NAME, MAJOR);
+		error = -1;
+	}
+	
+	return error;
+}
+
+void fifo_exit(void)
+{
+	int error = 0;
+
+	unregister_chrdev(MAJOR, NAME);
+	dprintk("%s: Descarga completada satisfactoriamente.\n", NAME);
+}
+
+module_init(fifo_init);
+module_exit(fifo_exit);

@@ -1,0 +1,31 @@
+#ifndef __FUSE2_H
+#define __FUSE2_H
+
+#define _GNU_SOURCE
+
+#include <fuse.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <glib/gqueue.h> /* para la tabla hash */
+
+typedef struct fuse_s fuse;
+
+int (*getattr) (const char * name, struct stat * buf);
+
+int (*mknod) (const char * path, mode_t mode, dev_t dev);
+
+int (*unlink) (const char * path);
+
+int (*rename) (const char * name, const char * new_name);
+
+int (*chmod) (const char * perm, mode_t mode);
+
+int (*chown) (const char *, uid_t, gid_t);
+
+int (*read) (const char *, char *, size_t, off_t, struct fuse_file_info *);
+
+int (*write) (const char *, const char *, size_t, off_t, struct fuse_file_info *);
+
+int (*utimens) (const char *, const struct timespec tv[2]);
+
+#endif

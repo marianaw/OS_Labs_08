@@ -1,0 +1,54 @@
+8
+
+dir
+200
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn/Lab4/trunk/simple/tests
+https://kali.famaf.unc.edu.ar/2008/so/grupo12/svn
+
+
+
+2008-11-12T01:36:58.060442Z
+189
+alk0107
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+b088ff67-a23e-4100-b484-3c7d8c797334
+
+test_part1.sh
+file
+
+
+
+
+2008-11-12T01:53:04.000000Z
+34735e4434add21df9e1f6bec680f090
+2008-11-12T01:36:58.060442Z
+189
+alk0107
+has-props
+
+test_part2.sh
+file
+
+
+
+
+2008-11-10T22:48:59.000000Z
+2daeb26a1998fa0b795db9025572420f
+2008-11-09T02:38:09.386639Z
+177
+alk0107
+has-props
+
